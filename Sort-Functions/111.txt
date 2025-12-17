@@ -1,0 +1,197 @@
+# Name: Ayan Tuladhar
+import csv
+import matplotlib.pyplot as plt
+import plotly 
+import matplotlib.pyplot as plt
+from plotly.graph_objs import Bar, Layout
+from plotly import offline
+
+
+
+# To read the 1M integers from file "rand1000000.txt"
+file = open('rand1000.txt', 'r')
+with open('rand1000.txt', 'r') as integers_infile:
+    Index = [integers.rstrip() for integers in integers_infile.readlines()]
+file.close()
+
+
+# The following function was compiled from Question 3 part1.
+# The following function is the modified version of naive recursive LCS.
+
+def lowest_common_sequence(a, b, c, d):
+    # Here c and d are the given sequences.
+    if c == 0 or d == 0:
+        return 1, 0
+    elif a[c - 1] == b[d - 1]:
+        i, j = lowest_common_sequence(a, b, c - 1, d - 1)
+        return (i + 1), (j + 1)
+    else:
+        i1, j1 = lowest_common_sequence(a, b, c, d - 1)
+        i2, j2 = lowest_common_sequence(a, b, c - 1, d)
+        if j1 > j2:
+            return (i1 + i2 + 1), j1
+        else:
+            return (i1 + i2 + 1), j2
+
+
+# The following function was compiled from the source referenced below:
+# https://www.geeksforgeeks.org/implementation-of-hashing-with-chaining-in-python/
+# https://www.youtube.com/watch?v=ea8BRGxGmlA
+# https://www.youtube.com/watch?v=vBxmYemGUWk
+# The following function represents Hashing with Chaining to use the recursive LCS function as very slow-
+# hash function of integer strings.
+# The table size is 10,000 and includes elements from the tuple, the number of recursive calls computed from-
+# recursive LCS function as indexes of the hash table..
+# Hash Map
+
+
+class HashTable:
+    # The following function creates a Hash Table with max size up to 10,000 buckets.
+    def __init__(self):
+        self.size = 500
+        self.hashmap = [[] for _ in range(0, self.size)]
+
+
+    # The following function defines python built-in hashing function for key value of Hash function.
+    def hashing_func(self, key):
+        key_hashed = hash(key) % self.size
+        return key_hashed
+
+    # The following function defines key and value of Hash function.
+    # To set key and value of an item.
+    def set(self, key, value):
+        key_for_hashing = self.hashing_func(key)
+        key_exists = False
+        bucket = self.hashmap[key_for_hashing]
+        # Each slot can have more than one value.
+        # The following function represents Hashing with chaining function to get around Collisions.
+        # Iterate though each item can have many item in the bucket.
+        for a, xy in enumerate(bucket):
+            x, y = xy
+            if key == x:
+                key_exists = True
+                break
+        if key_exists:
+            bucket[a] = (key, value)
+        else:
+            bucket.append((key, value))
+
+    # The following function defines key to get item.
+    def get(self, key):
+        hash_key = self.hashing_func(key)
+        slot = self.hashmap[hash_key]
+        # Checks key and value in bucket.
+        for xy in slot:
+            x, y = xy
+            if key == x:
+                return y
+            else:
+                raise KeyError("Does not exist")
+
+
+
+
+
+
+
+
+
+# To set the key and value manually we can use the following set command.
+# H.set(0, '100')
+# H.set(1, '200')
+
+
+# The following function reads the comma separated values for computed results from LCS recursive function-
+# and inserts them in to every buckets into hash tables.
+# The file 'rand1M_comma_separated_data.txt' contains the data from the number of recursive calls-
+# to find the LCS from 1M data set.
+# The first column on hash table represents key.
+# The second column on hash table represents data from the number of recursive calls to find the LCS.
+
+H = HashTable()
+
+
+
+
+
+# The following function counts the number of recursive calls for each 6-digit integer string-
+# (100,000-999,999) against "0123456789" string and returns a tuple of two elements -
+# LCS num and The number of recursive calls to find the LCS.
+# The computed numbers of recursive calls from LCS is saved as file 'rand1M_comma_separated_data.txt' which -
+# is used by the main driver program down below to fill in the hash table.
+
+number_of_recursion = []
+
+for integers in Index:
+    p, q = lowest_common_sequence(integers, '0123456789', 6, 10)
+    #print('Integers = %s\n LCS num = %d' %(integers,q))
+    #print('Integers = %s\n Recursive_numbers = %d' % (integers, p))
+    number_of_recursion.append(p)
+    H.set(p, q)
+print(H.hashmap, end="")
+
+
+
+collision = []
+for x in H.hashmap:
+    collision.append(len(x))
+
+for index in collision:
+    print('The number of collision in each index', index)
+
+#print(H.hashmap[0][1])
+#print(number_of_recursion)
+
+
+
+
+'''xAxis = number_of_recursion
+print (len(xAxis))
+yAxis = collision
+print (len(yAxis))
+plt.bar(xAxis, height = 200)
+plt.bar(yAxis, height = 500)
+plt.title('LCS HASH')
+plt.xlabel('Hash Keys')
+plt.ylabel('Collsipn')
+plt.savefig('LCS_HASH.png')
+
+
+print("size of indexes", len(xAxis))
+print("size of collision", len(yAxis))'''
+
+# The following function is the secondary method to fill in the hash table where all the values computed from the-
+# recursive calls computed from the LCS are stored as comma separated values.
+'''file = open('output.csv', 'r')
+with open('output.csv', 'r') as data:
+    for i in range(0, 10000):
+        reader = csv.reader(data, skipinitialspace=False, delimiter=',', quoting=csv.QUOTE_NONE)
+    for line in csv.reader(data):
+        print(line)
+'''
+
+
+plotly.offline.init_notebook_mode()
+from plotly.graph_objs import Scatter,Layout,Bar
+
+trace1 = Bar(x= xAxis,y=yAxis)
+
+# Create chart 
+plotly.offline.iplot({
+                         "data": [
+                                  trace1
+                                  ], 
+                        "layout": Layout(title="<b>Sample_Title</b>",xaxis= dict(
+                                                        title= '<b>X axis label</b>',
+                                                        zeroline= False,
+                                                        gridcolor='rgb(183,183,183)',
+                                                        showline=True
+                                                    ),
+                                                    yaxis=dict(
+                                                        title= '<b>Y axis Label</b>',
+                                                        gridcolor='rgb(183,183,183)',
+                                                        zeroline=False,
+                                                        showline=True
+                                                    ),font=dict(family='Courier New, monospace', size=12, color='rgb(0,0,0)'))
+                                  })
+
