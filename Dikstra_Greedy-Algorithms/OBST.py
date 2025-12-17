@@ -1,8 +1,5 @@
 # Name: Ayan Tuladhar
-# Student ID: 109974948
 
-# The following program was compiled form the source referenced below:
-# https://www.geeksforgeeks.org/optimal-binary-search-tree-dp-24/
 # The following program uses DP implementation to calculate Optimal Binary Search Tree cost.
 
 
