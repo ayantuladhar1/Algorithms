@@ -1,5 +1,4 @@
 # Name: Ayan Tuladhar
-# Student Id: 109974948
 
 
 import time
