@@ -1,7 +1,6 @@
 ```python
 #!/usr/bin/python3
 # Name: Ayan Tuladhar
-# Student Id: 109974948
 import time
 # Function to read an input file as txt file.
 
